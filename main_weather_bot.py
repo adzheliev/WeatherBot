@@ -1,10 +1,10 @@
-import requests
+"""Main bot module"""
 import datetime
-from config import bot_token, weather_token
+import requests
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-
+from config import bot_token, weather_token
 
 bot = Bot(token=bot_token)
 dispatcher = Dispatcher(bot)
@@ -25,7 +25,7 @@ async def get_weather(message: types.Message):
             f'http://api.openweathermap.org/geo/1.0/direct?q={message.text}'
             f'&appid={weather_token}')
         data = r.json()
-    except Exception:
+    except ValueError:
         await message.reply('Проверьте название города')
 
     lat = data[0]['lat']
@@ -63,7 +63,7 @@ async def get_weather(message: types.Message):
             f'Время захода солнца {sunset_time.hour}:{sunset_time.minute}\n'
             f'Продолжительность светового дня {day_len}'
         )
-    except Exception:
+    except ConnectionError:
         await message.reply(
             'Возникла проблема со связью! Проверьте соединение!'
         )
